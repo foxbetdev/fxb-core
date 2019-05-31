@@ -1,0 +1,81 @@
+policy_module(fxb, 1.100.1)
+
+########################################
+#
+# Declarations
+#
+
+type fxb_t;
+type fxb_exec_t;
+init_daemon_domain(fxb_t, fxb_exec_t)
+
+permissive fxb_t;
+
+type fxb_initrc_exec_t;
+init_script_file(fxb_initrc_exec_t)
+
+type fxb_conf_t;
+files_type(fxb_conf_t)
+
+type fxb_var_lib_t;
+files_type(fxb_var_lib_t)
+
+type fxb_var_run_t;
+files_type(fxb_var_run_t)
+
+type fxb_port_t;
+corenet_port(fxb_port_t)
+
+########################################
+#
+# fxb local policy
+#
+allow fxb_t self:process { fork };
+
+allow fxb_t self:fifo_file rw_fifo_file_perms;
+allow fxb_t self:unix_stream_socket create_stream_socket_perms;
+
+manage_dirs_pattern(fxb_t, fxb_conf_t, fxb_conf_t)
+manage_files_pattern(fxb_t, fxb_conf_t, fxb_conf_t)
+
+manage_dirs_pattern(fxb_t, fxb_var_lib_t, fxb_var_lib_t)
+manage_files_pattern(fxb_t, fxb_var_lib_t, fxb_var_lib_t)
+files_var_lib_filetrans(fxb_t, fxb_var_lib_t, { dir file })
+
+manage_dirs_pattern(fxb_t, fxb_var_run_t, fxb_var_run_t)
+manage_files_pattern(fxb_t, fxb_var_run_t, fxb_var_run_t)
+
+sysnet_dns_name_resolve(fxb_t)
+corenet_all_recvfrom_unlabeled(fxb_t)
+
+allow fxb_t self:tcp_socket create_stream_socket_perms;
+corenet_tcp_sendrecv_generic_if(fxb_t)
+corenet_tcp_sendrecv_generic_node(fxb_t)
+corenet_tcp_sendrecv_all_ports(fxb_t)
+corenet_tcp_bind_generic_node(fxb_t)
+
+gen_require(`
+    type fxb_port_t;
+')
+allow fxb_t fxb_port_t:tcp_socket name_bind;
+
+gen_require(`
+    type fxb_port_t;
+')
+allow fxb_t fxb_port_t:tcp_socket name_connect;
+
+domain_use_interactive_fds(fxb_t)
+
+files_read_etc_files(fxb_t)
+
+miscfiles_read_localization(fxb_t)
+
+sysnet_dns_name_resolve(fxb_t)
+
+allow fxb_t fxb_exec_t:file execute_no_trans;
+allow fxb_t self:process setsched;
+corecmd_exec_ls(fxb_t)
+corenet_tcp_connect_http_port(fxb_t)
+dev_read_urand(fxb_t)
+fs_getattr_xattr_fs(fxb_t)
+kernel_read_system_state(fxb_t)

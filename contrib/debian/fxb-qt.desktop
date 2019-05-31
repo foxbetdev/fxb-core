@@ -1,0 +1,12 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=FXB
+Comment=FXB P2P Cryptocurrency
+Comment[fr]=FXB, monnaie virtuelle cryptographique pair à pair
+Comment[tr]=FXB, eşten eşe kriptografik sanal para birimi
+Exec=fxb-qt %u
+Terminal=false
+Type=Application
+Icon=fxb128
+MimeType=x-scheme-handler/fxb;
+Categories=Office;Finance;
